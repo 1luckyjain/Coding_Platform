@@ -1,0 +1,29 @@
+const { required } = require("joi");
+const mongoose = require("mongoose");
+
+// const schema = new mongoose.Schema;
+
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
+});
+
+const userModel = mongoose.model("users", UserSchema);
+
+module.exports = userModel;

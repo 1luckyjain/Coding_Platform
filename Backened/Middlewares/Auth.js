@@ -1,13 +1,14 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const ensureAuthenticated = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers["authorization"];
+
   if (!authHeader) {
     return res.status(401).json({ message: "No token provided. Unauthorized" });
   }
 
   const token = authHeader.split(" ")[1]; // Extract after "Bearer"
-
+  console.log(token);
   if (!token) {
     return res.status(401).json({ message: "Invalid token format" });
   }
