@@ -1,17 +1,17 @@
-import './App.css';
-import Login from './pages/Login';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import Signup from './pages/Signup';
-import Home from './pages/Home';
-import Contests from './pages/Contests';
-import ContestDetails from './pages/ContestDetails';
+import "./App.css";
+import Login from "./pages/Login";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Signup from "./pages/Signup";
+import Home from "./pages/Home";
+import Contests from "./pages/Contests";
+import ContestDetails from "./pages/ContestDetails";
 
 // inside <Routes> ...
 
-import Problems from './pages/Problems';
-import RefreshHandler from './RefreshHandler';
-import { useState } from 'react';
-
+import Problems from "./pages/Problems";
+import RefreshHandler from "./RefreshHandler";
+import { useState } from "react";
+import Analytics from "./pages/Analytics";
 
 function App() {
   const [isAuthenticated, setisAuthenticated] = useState(false);
@@ -34,9 +34,22 @@ function App() {
 
         {/* Protected routes */}
         <Route path="/home" element={<PrivateRouting element={<Home />} />} />
-        <Route path="/contests" element={<PrivateRouting element={<Contests />} />} />
-        <Route path="/problems" element={<PrivateRouting element={<Problems />} />} />
-        <Route path="/contest/:id" element={<PrivateRouting element={<ContestDetails />} />} />
+        <Route
+          path="/contests"
+          element={<PrivateRouting element={<Contests />} />}
+        />
+        <Route
+          path="/problems"
+          element={<PrivateRouting element={<Problems />} />}
+        />
+        <Route
+          path="/Analytics"
+          element={<PrivateRouting element={<Analytics />} />}
+        />
+        <Route
+          path="/contest/:id"
+          element={<PrivateRouting element={<ContestDetails />} />}
+        />
       </Routes>
     </div>
   );

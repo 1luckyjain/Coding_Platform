@@ -58,7 +58,9 @@ const Dashboard = () => {
       <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg font-medium">Loading your dashboard...</p>
+          <p className="text-white text-lg font-medium">
+            Loading your dashboard...
+          </p>
         </div>
       </div>
     );
@@ -81,7 +83,9 @@ const Dashboard = () => {
               <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 EduCode
               </span>
-              <p className="text-xs text-gray-500 font-medium">Coding Excellence Platform</p>
+              <p className="text-xs text-gray-500 font-medium">
+                Coding Excellence Platform
+              </p>
             </div>
           </div>
 
@@ -118,7 +122,10 @@ const Dashboard = () => {
             {/* Time Display */}
             <div className="hidden md:block text-right">
               <p className="text-sm font-semibold text-gray-700">
-                {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                {currentTime.toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </p>
               <p className="text-xs text-gray-500">
                 {currentTime.toLocaleDateString()}
@@ -137,13 +144,17 @@ const Dashboard = () => {
                 <p className="text-sm font-bold text-gray-800">
                   {loggedinUser}
                 </p>
-                <p className="text-xs text-indigo-600 font-medium">Faculty • Online</p>
+                <p className="text-xs text-indigo-600 font-medium">
+                  Faculty • Online
+                </p>
               </div>
             </div>
 
             {/* Enhanced Settings Icon */}
             <button className="p-3 rounded-xl hover:bg-white/50 transition-all duration-200 group">
-              <span className="text-xl group-hover:rotate-90 transition-transform duration-200">⚙️</span>
+              <span className="text-xl group-hover:rotate-90 transition-transform duration-200">
+                ⚙️
+              </span>
             </button>
 
             {/* Enhanced Signout Button */}
@@ -168,9 +179,10 @@ const Dashboard = () => {
             <div className="h-1 w-32 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full mx-auto"></div>
           </div>
           <p className="text-xl text-gray-600 font-medium max-w-2xl mx-auto leading-relaxed">
-            Ready to dive into today's coding challenges? Your dashboard is loaded with exciting updates! 🚀
+            Ready to dive into today's coding challenges? Your dashboard is
+            loaded with exciting updates! 🚀
           </p>
-          
+
           {/* Quick Action Buttons */}
           <div className="flex flex-wrap justify-center gap-4 mt-8">
             <Link
@@ -208,11 +220,14 @@ const Dashboard = () => {
                   <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-gray-800 mb-2">Active Contests</h3>
-              <div className="text-4xl font-black text-blue-600 mb-2">{activeContests}</div>
+              <h3 className="text-lg font-bold text-gray-800 mb-2">
+                Active Contests
+              </h3>
+              <div className="text-4xl font-black text-blue-600 mb-2">
+                {activeContests}
+              </div>
               <div className="flex items-center text-green-600 font-semibold">
-                <span className="mr-1">↗️</span>
-                +{activeContestsDelta} this week
+                <span className="mr-1">↗️</span>+{activeContestsDelta} this week
               </div>
             </div>
           </div>
@@ -229,13 +244,15 @@ const Dashboard = () => {
                   <div className="w-3 h-3 bg-orange-400 rounded-full animate-bounce"></div>
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-gray-800 mb-2">Total Participants</h3>
+              <h3 className="text-lg font-bold text-gray-800 mb-2">
+                Total Participants
+              </h3>
               <div className="text-4xl font-black text-green-600 mb-2">
                 {totalParticipants.toLocaleString()}
               </div>
               <div className="flex items-center text-green-600 font-semibold">
-                <span className="mr-1">📈</span>
-                +{participantsGrowth}% this month
+                <span className="mr-1">📈</span>+{participantsGrowth}% this
+                month
               </div>
             </div>
           </div>
@@ -252,8 +269,12 @@ const Dashboard = () => {
                   <div className="w-3 h-3 bg-purple-400 rounded-full animate-ping"></div>
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-gray-800 mb-2">Problem Bank</h3>
-              <div className="text-4xl font-black text-purple-600 mb-2">{problemBank}</div>
+              <h3 className="text-lg font-bold text-gray-800 mb-2">
+                Problem Bank
+              </h3>
+              <div className="text-4xl font-black text-purple-600 mb-2">
+                {problemBank}
+              </div>
               <div className="flex items-center text-purple-600 font-semibold">
                 <span className="mr-1">🔥</span>
                 Ready to solve
@@ -273,8 +294,12 @@ const Dashboard = () => {
                   <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse"></div>
                 </div>
               </div>
-              <h3 className="text-lg font-bold text-gray-800 mb-2">Avg. Performance</h3>
-              <div className="text-4xl font-black text-orange-600 mb-2">{avgPerformance}%</div>
+              <h3 className="text-lg font-bold text-gray-800 mb-2">
+                Avg. Performance
+              </h3>
+              <div className="text-4xl font-black text-orange-600 mb-2">
+                {avgPerformance}%
+              </div>
               <div className="flex items-center text-orange-600 font-semibold">
                 <span className="mr-1">🎯</span>
                 Excellent score!
@@ -292,7 +317,9 @@ const Dashboard = () => {
                 <span className="text-2xl">🔥</span>
                 Recent Activity
               </h2>
-              <button className="text-indigo-600 hover:text-indigo-800 font-semibold">View All</button>
+              <button className="text-indigo-600 hover:text-indigo-800 font-semibold">
+                View All
+              </button>
             </div>
             <div className="space-y-4">
               <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200/50">
@@ -300,8 +327,12 @@ const Dashboard = () => {
                   🏆
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-800">New contest "Algorithm Masters" started!</p>
-                  <p className="text-sm text-gray-600">2 hours ago • 156 participants joined</p>
+                  <p className="font-semibold text-gray-800">
+                    New contest "Algorithm Masters" started!
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    2 hours ago • 156 participants joined
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200/50">
@@ -309,8 +340,12 @@ const Dashboard = () => {
                   ✅
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-800">Problem "Binary Tree Traversal" solved by 89 users</p>
-                  <p className="text-sm text-gray-600">5 hours ago • Difficulty: Medium</p>
+                  <p className="font-semibold text-gray-800">
+                    Problem "Binary Tree Traversal" solved by 89 users
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    5 hours ago • Difficulty: Medium
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-4 p-4 bg-gradient-to-r from-purple-50 to-violet-50 rounded-2xl border border-purple-200/50">
@@ -318,8 +353,12 @@ const Dashboard = () => {
                   📊
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-gray-800">Weekly performance report generated</p>
-                  <p className="text-sm text-gray-600">1 day ago • Average score increased by 12%</p>
+                  <p className="font-semibold text-gray-800">
+                    Weekly performance report generated
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    1 day ago • Average score increased by 12%
+                  </p>
                 </div>
               </div>
             </div>
@@ -334,15 +373,21 @@ const Dashboard = () => {
             <div className="space-y-6">
               <div className="text-center p-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-2xl">
                 <div className="text-3xl font-black text-indigo-600">24</div>
-                <p className="text-sm font-semibold text-gray-700">Problems Solved Today</p>
+                <p className="text-sm font-semibold text-gray-700">
+                  Problems Solved Today
+                </p>
               </div>
               <div className="text-center p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl">
                 <div className="text-3xl font-black text-green-600">7</div>
-                <p className="text-sm font-semibold text-gray-700">Current Streak</p>
+                <p className="text-sm font-semibold text-gray-700">
+                  Current Streak
+                </p>
               </div>
               <div className="text-center p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl">
                 <div className="text-3xl font-black text-orange-600">92%</div>
-                <p className="text-sm font-semibold text-gray-700">Success Rate</p>
+                <p className="text-sm font-semibold text-gray-700">
+                  Success Rate
+                </p>
               </div>
             </div>
           </div>
@@ -358,13 +403,17 @@ const Dashboard = () => {
                 </div>
                 <div className="text-left">
                   <h3 className="font-bold text-gray-800">EduCode Platform</h3>
-                  <p className="text-sm text-gray-600">Empowering coders worldwide</p>
+                  <p className="text-sm text-gray-600">
+                    Empowering coders worldwide
+                  </p>
                 </div>
               </div>
-              
+
               <div className="flex items-center gap-6">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-indigo-600">{new Date().getFullYear()}</p>
+                  <p className="text-2xl font-bold text-indigo-600">
+                    {new Date().getFullYear()}
+                  </p>
                   <p className="text-xs text-gray-500">Year of Innovation</p>
                 </div>
                 <div className="text-center">
@@ -373,14 +422,17 @@ const Dashboard = () => {
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold text-purple-600">∞</p>
-                  <p className="text-xs text-gray-500">Learning Opportunities</p>
+                  <p className="text-xs text-gray-500">
+                    Learning Opportunities
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="mt-6 pt-6 border-t border-gray-200">
               <p className="text-gray-600 font-medium">
-                "Code is poetry written in logic" - Keep coding, keep growing! 🚀
+                "Code is poetry written in logic" - Keep coding, keep growing!
+                🚀
               </p>
             </div>
           </div>
