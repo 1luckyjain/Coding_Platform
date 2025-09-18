@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const ensureAuthenticated = (req, res, next) => {
+const ensureAuthenticated = async (req, res, next) => {
   const authHeader = req.headers["authorization"];
 
   if (!authHeader) {
@@ -14,7 +14,7 @@ const ensureAuthenticated = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = await jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // attach payload (e.g. { id, email }) to req
     next();
   } catch (error) {
