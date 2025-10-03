@@ -1,7 +1,7 @@
 // src/components/Header.jsx
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-
+// import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 const Header = ({ loggedinUser = "Guest", handleSignout }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -33,30 +33,54 @@ const Header = ({ loggedinUser = "Guest", handleSignout }) => {
 
         {/* Center - Navigation */}
         <div className="hidden lg:flex gap-2">
-          <Link
+          <NavLink
             to="/dashboard"
-            className="flex items-center gap-2 text-indigo-600 font-semibold bg-gradient-to-r from-indigo-50 to-purple-50 px-4 py-2 rounded-xl border border-indigo-200 shadow-sm hover:shadow-md transition-all duration-200"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
+                isActive
+                  ? "text-indigo-600 font-semibold bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 shadow-sm hover:shadow-md"
+                  : "text-gray-700 hover:text-indigo-600 font-medium hover:bg-white/50"
+              }`
+            }
           >
             <span className="text-lg">📊</span> Dashboard
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/contests"
-            className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 font-medium px-4 py-2 rounded-xl hover:bg-white/50 transition-all duration-200"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
+                isActive
+                  ? "text-indigo-600 font-semibold bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 shadow-sm hover:shadow-md"
+                  : "text-gray-700 hover:text-indigo-600 font-medium hover:bg-white/50"
+              }`
+            }
           >
             <span className="text-lg">🏆</span> Contests
-          </Link>
-          <Link
+          </NavLink>
+          <NavLink
             to="/problems"
-            className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 font-medium px-4 py-2 rounded-xl hover:bg-white/50 transition-all duration-200"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
+                isActive
+                  ? "text-indigo-600 font-semibold bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 shadow-sm hover:shadow-md"
+                  : "text-gray-700 hover:text-indigo-600 font-medium hover:bg-white/50"
+              }`
+            }
           >
-            <span className="text-lg">📘</span> Problems
-          </Link>
-          <Link
+            <span className="text-lg">📊</span> Problems
+          </NavLink>
+          <NavLink
             to="/analytics"
-            className="flex items-center gap-2 text-gray-700 hover:text-indigo-600 font-medium px-4 py-2 rounded-xl hover:bg-white/50 transition-all duration-200"
+            className={({ isActive }) =>
+              `flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200 ${
+                isActive
+                  ? "text-indigo-600 font-semibold bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 shadow-sm hover:shadow-md"
+                  : "text-gray-700 hover:text-indigo-600 font-medium hover:bg-white/50"
+              }`
+            }
           >
-            <span className="text-lg">📈</span> Analytics
-          </Link>
+            <span className="text-lg">📊</span> Analytics
+          </NavLink>
         </div>
 
         {/* Right Side - User Info */}

@@ -35,6 +35,10 @@ function App() {
         {/* Protected routes */}
         <Route path="/home" element={<PrivateRouting element={<Home />} />} />
         <Route
+          path="/dashboard"
+          element={<PrivateRouting element={<Home />} />}
+        />
+        <Route
           path="/contests"
           element={<PrivateRouting element={<Contests />} />}
         />
