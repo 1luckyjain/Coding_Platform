@@ -5,12 +5,36 @@ const ProblemSchema = new mongoose.Schema(
     contest: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Contest",
-      required: true,
+      required: false, // Made optional for standalone problems
     },
     title: {
       type: String,
       required: true,
     },
+    description: {
+      type: String,
+      required: true,
+    },
+    difficulty: {
+      type: String,
+      enum: ["Easy", "Medium", "Hard"],
+      required: true,
+    },
+    acceptance: {
+      type: String,
+      default: "0.0%",
+    },
+    constraints: {
+      type: String,
+      required: true,
+    },
+    examples: [
+      {
+        input: { type: String, required: true },
+        output: { type: String, required: true },
+        explanation: { type: String },
+      },
+    ],
     statement: {
       type: String,
       required: true,
@@ -24,12 +48,12 @@ const ProblemSchema = new mongoose.Schema(
       required: true,
     },
     timeLimit: {
-      type: Number,
-      default: 1, // in seconds
+      type: String,
+      default: "1s",
     },
     memoryLimit: {
-      type: Number,
-      default: 256, // in MB
+      type: String,
+      default: "256MB",
     },
     testCases: [
       {
@@ -46,3 +70,4 @@ const ProblemSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Problem", ProblemSchema);
+ 

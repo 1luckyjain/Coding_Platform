@@ -1,9 +1,10 @@
 // src/components/Header.jsx
 import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 const Header = ({ loggedinUser = "Guest", handleSignout }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -115,7 +116,11 @@ const Header = ({ loggedinUser = "Guest", handleSignout }) => {
           </div>
 
           {/* Settings */}
-          <button className="p-3 rounded-xl hover:bg-white/50 transition-all duration-200 group">
+          <button 
+            onClick={() => navigate('/settings')}
+            className="p-3 rounded-xl hover:bg-white/50 transition-all duration-200 group"
+            title="Settings"
+          >
             <span className="text-xl group-hover:rotate-90 transition-transform duration-200">
               ⚙️
             </span>

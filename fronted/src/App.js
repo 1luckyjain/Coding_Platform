@@ -12,6 +12,7 @@ import Problems from "./pages/Problems";
 import RefreshHandler from "./RefreshHandler";
 import { useState } from "react";
 import Analytics from "./pages/Analytics";
+import Settings from "./pages/Settings";
 
 function App() {
   const [isAuthenticated, setisAuthenticated] = useState(false);
@@ -53,6 +54,10 @@ function App() {
         <Route
           path="/contest/:id"
           element={<PrivateRouting element={<ContestDetails />} />}
+        />
+        <Route
+          path="/settings"
+          element={<PrivateRouting element={<Settings />} />}
         />
       </Routes>
     </div>

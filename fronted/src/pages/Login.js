@@ -40,6 +40,7 @@ const Login = () => {
       if (success) {
         handleSuccess(message);
         localStorage.setItem("token", jwtToken);
+        localStorage.setItem("user", JSON.stringify({ name, email }));
         localStorage.setItem("loggedinUser", name);
         setTimeout(() => {
           navigate("/home");

@@ -67,4 +67,53 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { signup, login };
+const updateProfile = async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const userId = req.user._id; // Get user ID from JWT token
+
+    // Check if email is already taken by another user
+    const existingUser = await userModel.findOne({ 
+      email, 
+      _id: { $ne: userId } 
+    });
+    
+    if (existingUser) {
+      return res.status(409).json({
+        message: "Email is already taken by another user",
+        success: false
+      });
+    }
+
+    // Update user profile
+    const updatedUser = await userModel.findByIdAndUpdate(
+      userId,
+      { name, email },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false
+      });
+    }
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      success: true,
+      user: {
+        name: updatedUser.name,
+        email: updatedUser.email
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error: error.message
+    });
+  }
+};
+
+module.exports = { signup, login, updateProfile };
