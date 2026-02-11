@@ -1,6 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import axios from "axios";
 import { problemsData } from "../data/problemData";
 import CreateCustomProblem from "./CreateCustomProblem";
+
+/* =========================
+   Helpers
+========================= */
+
+const getDurationText = (start, end) => {
+  if (!start || !end) return "";
+  const diff = new Date(end) - new Date(start);
+  if (diff <= 0) return "";
+
+  const mins = Math.floor(diff / (1000 * 60));
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+
+  if (h && m) return `${h}h ${m}m`;
+  if (h) return `${h} hours`;
+  return `${m} minutes`;
+};
 
 const CreateContest = ({ onCreate }) => {
   const [form, setForm] = useState({
@@ -8,17 +27,23 @@ const CreateContest = ({ onCreate }) => {
     description: "",
     startTime: "",
     endTime: "",
+    rules: "",
+    visibility: "public",
   });
 
   const [search, setSearch] = useState("");
   const [selectedProblems, setSelectedProblems] = useState([]);
   const [customProblems, setCustomProblems] = useState([]);
   const [showCustomModal, setShowCustomModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const durationText = useMemo(
+    () => getDurationText(form.startTime, form.endTime),
+    [form.startTime, form.endTime]
+  );
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-
-  /* ---------------- SELECT EXISTING PROBLEMS ---------------- */
 
   const toggleProblem = (problem) => {
     const exists = selectedProblems.find((p) => p.id === problem.id);
@@ -29,189 +54,227 @@ const CreateContest = ({ onCreate }) => {
     }
   };
 
-  const move = (index, dir) => {
-    const copy = [...selectedProblems];
-    const newIndex = index + dir;
-    if (newIndex < 0 || newIndex >= copy.length) return;
-    [copy[index], copy[newIndex]] = [copy[newIndex], copy[index]];
-    setSelectedProblems(copy);
-  };
+  /* =========================
+     SUBMIT
+  ========================= */
 
-  /* ---------------- SUBMIT ---------------- */
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.title || !form.description || !form.startTime || !form.endTime) {
+      alert("Please fill all required fields");
+      return;
+    }
+
+    const diff = new Date(form.endTime) - new Date(form.startTime);
+    if (diff <= 0) {
+      alert("End time must be after start time");
+      return;
+    }
+
+    if (diff < 30 * 60 * 1000) {
+      alert("Contest duration must be at least 30 minutes");
+      return;
+    }
 
     if (selectedProblems.length === 0 && customProblems.length === 0) {
       alert("Add at least one problem");
       return;
     }
 
-    const contest = {
-      id: Date.now(),
-      title: form.title,
-      description: form.description,
-      startTime: form.startTime,
-      endTime: form.endTime,
+    try {
+      setSubmitting(true);
 
-      problemIds: selectedProblems.map((p) => p.id),
-      customProblems: customProblems,
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Login required");
+        return;
+      }
 
-      status: "Upcoming",
-      participants: 0,
-    };
+      /* 🔥 IMPORTANT FIX:
+         Treat ALL selected problems as CUSTOM problems
+         because problemsData uses numeric IDs (not MongoDB ObjectIds)
+      */
 
-    onCreate(contest);
+      const allCustomProblems = [
+        ...customProblems,
+        ...selectedProblems.map((p) => ({
+          title: p.title,
+          description: p.description || "",
+          difficulty: p.difficulty || "Medium",
+        })),
+      ];
 
-    setForm({ title: "", description: "", startTime: "", endTime: "" });
-    setSelectedProblems([]);
-    setCustomProblems([]);
+      const payload = {
+        title: form.title,
+        description: form.description,
+        startTime: new Date(form.startTime).toISOString(),
+        endTime: new Date(form.endTime).toISOString(),
+        rules: form.rules,
+        visibility: form.visibility,
+        problems: [], // ❌ DO NOT send numeric ids
+        customProblems: allCustomProblems,
+      };
+
+      const res = await axios.post(
+        "http://localhost:8080/api/v1/contests",
+        payload,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      onCreate(res.data.data);
+
+      setForm({
+        title: "",
+        description: "",
+        startTime: "",
+        endTime: "",
+        rules: "",
+        visibility: "public",
+      });
+      setSelectedProblems([]);
+      setCustomProblems([]);
+      setShowCustomModal(false);
+    } catch (err) {
+      alert(err.response?.data?.message || "Contest creation failed");
+    } finally {
+      setSubmitting(false);
+    }
   };
-
-  /* ---------------- FILTER ---------------- */
 
   const filteredProblems = problemsData.filter(
     (p) =>
       p.title.toLowerCase().includes(search.toLowerCase()) ||
-      p.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()))
+      (p.tags || []).some((t) => t.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
-    <div className="max-w-5xl mx-auto bg-white p-6 rounded-xl shadow">
-      <h2 className="text-2xl font-bold mb-4">Create Contest</h2>
+    <div className="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow">
+      <h2 className="text-3xl font-bold mb-6">🏁 Create Contest</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          name="title"
-          placeholder="Contest Title"
-          className="border w-full px-4 py-2 rounded"
-          value={form.title}
-          onChange={handleChange}
-          required
-        />
+      <form onSubmit={handleSubmit} className="space-y-6">
 
-        <textarea
-          name="description"
-          placeholder="Contest Description"
-          className="border w-full px-4 py-2 rounded"
-          value={form.description}
-          onChange={handleChange}
-          required
-        />
-
-        <div className="grid grid-cols-2 gap-4">
+        {/* BASIC INFO */}
+        <div className="bg-gray-50 p-5 rounded-xl space-y-4">
           <input
-            type="datetime-local"
-            name="startTime"
-            className="border px-4 py-2 rounded"
-            value={form.startTime}
+            name="title"
+            placeholder="Contest Title"
+            className="border w-full px-4 py-2 rounded"
+            value={form.title}
             onChange={handleChange}
             required
           />
-          <input
-            type="datetime-local"
-            name="endTime"
-            className="border px-4 py-2 rounded"
-            value={form.endTime}
+
+          <textarea
+            name="description"
+            placeholder="Contest Description"
+            className="border w-full px-4 py-2 rounded"
+            value={form.description}
             onChange={handleChange}
             required
           />
         </div>
 
-        {/* ---------------- EXISTING PROBLEMS ---------------- */}
+        {/* TIMING */}
+        <div className="bg-gray-50 p-5 rounded-xl space-y-4">
+          <h3 className="font-semibold text-lg">⏱ Contest Timing</h3>
 
-        <h3 className="font-semibold mt-6">Add Existing Problems</h3>
-
-        <input
-          placeholder="Search problems..."
-          className="border px-3 py-2 w-full rounded"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-64 overflow-y-auto border p-3 rounded">
-          {filteredProblems.map((p) => {
-            const selected = selectedProblems.some((sp) => sp.id === p.id);
-            return (
-              <button
-                type="button"
-                key={p.id}
-                onClick={() => toggleProblem(p)}
-                className={`border px-3 py-2 rounded text-left ${
-                  selected ? "bg-blue-100 border-blue-400" : "hover:bg-gray-50"
-                }`}
-              >
-                <div className="font-medium">{p.title}</div>
-                <div className="text-sm text-gray-500">
-                  {p.difficulty} • {p.tags.join(", ")}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setShowCustomModal(true)}
-          className="text-blue-600 underline mt-3"
-        >
-          + Add Custom Problem
-        </button>
-
-        {/* ---------------- ORDER ---------------- */}
-
-        <h3 className="font-semibold mt-4">Contest Problems Order</h3>
-
-        {selectedProblems.map((p, i) => (
-          <div
-            key={p.id}
-            className="flex justify-between items-center border px-3 py-2 rounded mb-2"
-          >
-            <span>
-              {i + 1}. {p.title}
-            </span>
-            <div className="space-x-2">
-              <button type="button" onClick={() => move(i, -1)}>
-                ↑
-              </button>
-              <button type="button" onClick={() => move(i, 1)}>
-                ↓
-              </button>
-            </div>
+          <div className="grid grid-cols-2 gap-4">
+            <input
+              type="datetime-local"
+              name="startTime"
+              className="border px-4 py-2 rounded"
+              value={form.startTime}
+              onChange={handleChange}
+              required
+            />
+            <input
+              type="datetime-local"
+              name="endTime"
+              className="border px-4 py-2 rounded"
+              value={form.endTime}
+              onChange={handleChange}
+              required
+            />
           </div>
-        ))}
 
-        {/* ---------------- CUSTOM PROBLEMS ---------------- */}
+          {durationText && (
+            <div className="text-blue-600 font-medium">
+              ⏳ Contest Duration: <b>{durationText}</b>
+            </div>
+          )}
+        </div>
 
-        {customProblems.length > 0 && (
-          <>
-            <h3 className="font-semibold mt-4">Custom Problems</h3>
-            {customProblems.map((p, i) => (
-              <div
-                key={p.id}
-                className="border px-3 py-2 rounded mb-2 bg-purple-50"
-              >
-                {i + 1}. {p.title} ({p.difficulty})
-              </div>
-            ))}
-          </>
-        )}
+        {/* RULES */}
+        <div className="bg-gray-50 p-5 rounded-xl">
+          <h3 className="font-semibold mb-2">📝 Rules</h3>
+          <textarea
+            name="rules"
+            placeholder="Contest rules (optional)"
+            className="border w-full px-4 py-2 rounded"
+            value={form.rules}
+            onChange={handleChange}
+          />
+        </div>
 
+        {/* PROBLEMS */}
+        <div className="bg-gray-50 p-5 rounded-xl space-y-4">
+          <h3 className="font-semibold">📚 Add Problems</h3>
+
+          <input
+            placeholder="Search problems..."
+            className="border px-3 py-2 w-full rounded"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+            {filteredProblems.map((p) => {
+              const selected = selectedProblems.some((sp) => sp.id === p.id);
+              return (
+                <button
+                  type="button"
+                  key={p.id}
+                  onClick={() => toggleProblem(p)}
+                  className={`border px-3 py-2 rounded text-left ${
+                    selected
+                      ? "bg-blue-100 border-blue-400"
+                      : "hover:bg-white"
+                  }`}
+                >
+                  <div className="font-medium">{p.title}</div>
+                  <div className="text-xs text-gray-500">
+                    {p.difficulty} • {(p.tags || []).join(", ")}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setShowCustomModal(true)}
+            className="text-blue-600 underline"
+          >
+            + Add Custom Problem
+          </button>
+        </div>
+
+        {/* SUBMIT */}
         <button
           type="submit"
-          className="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded"
+          disabled={submitting}
+          className="w-full py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl text-lg font-semibold"
         >
-          Create Contest
+          {submitting ? "Creating Contest..." : "🚀 Create Contest"}
         </button>
       </form>
 
-      {/* ---------------- MODAL ---------------- */}
-
       {showCustomModal && (
         <CreateCustomProblem
-          onAdd={(problem) =>
-            setCustomProblems([...customProblems, problem])
-          }
+          onAdd={(problem) => setCustomProblems([...customProblems, problem])}
           onClose={() => setShowCustomModal(false)}
         />
       )}
